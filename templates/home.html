@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='home.css') }}"
+    />
+    <title>Expense Tracker</title>
+  </head>
+  <body>
+    <h1>Expense Tracker</h1>
+    <form id="expense-form" action="{{ url_for('home') }}" method="post">
+      <input type="number" name="amount" placeholder="Amount" />
+      <input type="text" name="category" placeholder="Category" />
+      <input type="text" name="description" placeholder="Description" />
+      <input type="date" name="date" /><br /><br />
+      <button type="submit" name="modify" value="add">Add Expense</button>
+      <button type="submit" name="modify" value="remove">
+        Remove Selected
+      </button>
+      <button type="submit" name="modify" value="clear">Clear All Data</button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="expense-table">
+          <!-- Expenses will be added here -->
+          {% for expense in expenses %}
+          <tr>
+            <td>
+              <input
+                type="checkbox"
+                name="expense_id"
+                value="{{expense[0]}}"
+              />{{ expense[1] }}
+            </td>
+            <td>{{ expense[2] }}</td>
+            <td>{{ expense[3] }}</td>
+            <td>{{ expense[4] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </form>
+  </body>
+</html>
