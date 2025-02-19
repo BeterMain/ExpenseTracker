@@ -1,12 +1,13 @@
 import mysql.connector
-import pandas as pd
+import csv
 
 class Database:
     def __init__(self):
         self.host = 'localhost'
-        self.user = 'username'
+        self.user = 'user'
         self.password = 'password'
         self.database = 'expense_tracker'
+        self.sort_column = 'date'
     
     # Executes INSERT query on db to add an expense
     def add_expense(self, amount, category, description, date):
@@ -59,7 +60,7 @@ class Database:
         cursor = conn.cursor()    
 
         # Assigns the SQL query to delete selected expenses from the database
-        sql = "DELETE FROM expenses WHERE id IN (%s"
+        sql = "DELETE FROM expenses WHERE expense_id IN (%s"
         for i in range(len(expense_id)-1): # appending each need value to the sql string
             sql += ", %s"
         sql += ")" # adding closing tag
@@ -75,7 +76,7 @@ class Database:
         conn.close()
 
     # Executes SELECT query on db to fetch all expenses
-    def get_expenses(self, column='*'):
+    def get_expenses(self, column='date'):
         # Attempt to connect to the database
         conn = mysql.connector.connect(
             host=self.host,
@@ -86,10 +87,11 @@ class Database:
         cursor = conn.cursor()
 
         # Assigns the correct scope of SELECT query
-        if column not in ['*', 'amount', 'category', 'description', 'date']:
-            column = '*'
+        if column not in ['amount', 'category', 'description', 'date']:
+            column = 'date'
+        self.sort_column = column
 
-        cursor.execute(f"SELECT {column} FROM expenses ORDER BY date DESC")
+        cursor.execute(f"SELECT * FROM expenses ORDER BY {self.sort_column} DESC")
         # Gathers results in list
         expenses = cursor.fetchall()
         
@@ -97,19 +99,38 @@ class Database:
         # Return results
         return expenses
 
-    # TODO: Implement this function into separate page to display monthly summary with graphs
-    def monthly_summary(self):
+    def convert_to_csv(self):
+         # Attempt to connect to the database
         conn = mysql.connector.connect(
             host=self.host,
             user=self.user,
             password=self.password,
             database=self.database
         )
-        df = pd.read_sql_query("SELECT * FROM expenses", conn)
+        cursor = conn.cursor()
+
+        cursor.execute(f"SELECT * FROM expenses ORDER BY {self.sort_column} DESC")
+        rows = cursor.fetchall()
+
+        columns = [col[0] for col in cursor.description]
         conn.close()
+        
+        # Convert rows into JSON
+        data = [dict(zip(columns, row)) for row in rows]
+        
+        # Convert JSON to CSV
+        csv_file_path = 'expenses.csv'
+        
+        with open(csv_file_path, 'w') as file:
+            csv_writer = csv.writer(file)
+            
+            # Write header
+            if data:
+                header = data[0].keys()
+                csv_writer.writerow(header)
+                
+                # Write data rows
+                for item in data:
+                    csv_writer.writerow(item.values())
 
-        df["date"] = pd.to_datetime(df["date"])
-        df["month"] = df["date"].dt.strftime("%Y-%m")
-
-        summary = df.groupby("month")["amount"].sum()
-        return summary
+        return csv_file_path

@@ -3,27 +3,56 @@ body {
   text-align: center;
   padding: 20px;
 }
+
 h1 {
   color: #333;
 }
+
 form {
   margin-bottom: 20px;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
+
 th,
 td {
   border: 1px solid #ddd;
   padding: 10px;
   text-align: center;
 }
+
 th {
   background-color: #f4f4f4;
 }
-button {
+
+#sort-arrow {
+  width: 10px;
+  height: 10px;
+}
+
+#download-link:link,
+#download-link:visited {
+  color: black;
+  background-color: #efefef;
+  padding: 9px 18px;
+  border: 1px solid;
+  border-color: #767676;
+  border-radius: 2px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+#download-link:hover,
+#download-link:active {
+  background-color: #e4e3e3;
+  border-color: black;
+}
+
+#body-button {
   padding: 10px 20px;
   cursor: pointer;
 }
