@@ -1,5 +1,5 @@
 # Expense Tracker
-![Expense Tracker UI](image.png)
+![Expense Tracker UI](static/image.png)
 ## Description
 
 The Expense Tracker is a web application that allows users to track their expenses. Users can add, remove, and clear expenses, and view a summary of their expenses. The application is built using Flask, a lightweight web framework for Python, and MySQL for the database.
