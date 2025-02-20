@@ -1,8 +1,8 @@
 # Expense Tracker
-![Expense Tracker UI](static/image.png)
+![Expense Tracker UI](static/image-new.png)
 ## Description
 
-The Expense Tracker is a web application that allows users to track their expenses. Users can add, remove, and clear expenses, and view a summary of their expenses. The application is built using Flask, a lightweight web framework for Python, and MySQL for the database.
+The Expense Tracker is a web application that allows users to track their expenses. Users can add, remove, clear, sort, and export expenses. The application is built using Flask, a lightweight web framework for Python, and MySQL for the database.
 
 ## Files
 
@@ -51,7 +51,7 @@ CREATE DATABASE expense_tracker;
 USE expense_tracker;
 
 CREATE TABLE expenses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    expense_id INT AUTO_INCREMENT PRIMARY KEY,
     amount DECIMAL(10, 2) NOT NULL,
     category VARCHAR(255) NOT NULL,
     description TEXT,
@@ -76,6 +76,8 @@ python app.py
 * Add Expense: Fill in the form with the amount, category, description, and date, then click "Add Expense".
 * Remove Selected: Select the expenses you want to remove by checking the checkboxes, then click "Remove Selected".
 * Clear All Data: Click "Clear All Data" to remove all expenses from the database.
+* Sort Current Data: Click the down arrow next each column name to sort the data based on the column
+* Export data to CSV: Click "Convert to CSV" to download your current data into a .csv file for editing in Excel!
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
