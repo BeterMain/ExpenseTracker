@@ -1,12 +1,15 @@
 import mysql.connector
 import csv
+from dotenv import load_dotenv
+import os 
 
 class Database:
     def __init__(self):
-        self.host = 'localhost'
-        self.user = 'user'
-        self.password = 'password'
-        self.database = 'expense_tracker'
+        load_dotenv()
+        self.host = os.getenv('HOSTNAME')
+        self.user = os.getenv('USERNAME')
+        self.password = os.getenv('PASSWORD')
+        self.database = os.getenv('DB_NAME')
         self.sort_column = 'date'
     
     # Executes INSERT query on db to add an expense
