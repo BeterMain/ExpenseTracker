@@ -58,7 +58,7 @@ CREATE TABLE expenses (
     date DATE NOT NULL
 );
 ```
-4. Update the database connection details in Database.py:
+4. Update the database connection details in your .env file:
 ```python
 self.host = 'localhost'
 self.user = 'your_mysql_username'
