@@ -6,10 +6,10 @@ import os
 class Database:
     def __init__(self):
         load_dotenv()
-        self.host = os.getenv('HOSTNAME')
-        self.user = os.getenv('USERNAME')
-        self.password = os.getenv('PASSWORD')
-        self.database = os.getenv('DB_NAME')
+        self.host = os.getenv('MYSQLHOST')
+        self.user = os.getenv('MYSQLUSER')
+        self.password = os.getenv('MYSQLPASSWORD')
+        self.database = os.getenv('MYSQLDATABASE')
         self.sort_column = 'date'
     
     # Executes INSERT query on db to add an expense
