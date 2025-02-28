@@ -2,7 +2,7 @@
 ![Expense Tracker UI](static/image-new.png)
 ## Description
 
-The Expense Tracker is a web application that allows users to track their expenses. Users can add, remove, clear, sort, and export expenses. The application is built using Flask, a lightweight web framework for Python, and MySQL for the database.
+The Expense Tracker is a web application that allows users to track their expenses. Users can add, remove, clear, sort, and export expenses. The application is built using Flask, a lightweight web framework for Python, and MySQL for the database. Demo can viewed [here](https://expensetracker-production-1dbb.up.railway.app).
 
 ## Files
 
@@ -59,18 +59,18 @@ CREATE TABLE expenses (
 );
 ```
 4. Update the database connection details in your .env file:
-```python
-self.host = 'localhost'
-self.user = 'your_mysql_username'
-self.password = 'your_mysql_password'
-self.database = 'expense_tracker'
+```env
+MYSQLHOST='localhost'
+MYSQLUSER='your_mysql_username'
+MYSQLPASSWORD='your_mysql_password'
+MYSQLDATABASE='expense_tracker'
 ```
 ## Running the Application
 1. Start the Flask application:
 ```bash
 python app.py
 ```
-2. Open your web browser and go to the url posted in the terminal.
+2. Open your web browser and go to the url posted in the terminal, or go to [here](https://expensetracker-production-1dbb.up.railway.app) to view a demo of the project in your browser. 
 
 ## Usage
 * Add Expense: Fill in the form with the amount, category, description, and date, then click "Add Expense".
