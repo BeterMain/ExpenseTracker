@@ -28,8 +28,9 @@ class Database:
         values = (amount, category, description, date)
         
         # Execute query and commit changes
-        cursor.execute(sql, values)
-        conn.commit()
+        if len(self.get_expenses) < 20:
+            cursor.execute(sql, values)
+            conn.commit()
         conn.close()
     
     # Executes DELETE query on db to clear all expenses
