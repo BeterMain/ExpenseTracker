@@ -28,7 +28,7 @@ class Database:
         values = (amount, category, description, date)
         
         # Execute query and commit changes
-        if len(self.get_expenses) < 20:
+        if len(self.get_expenses()) < 20:
             cursor.execute(sql, values)
             conn.commit()
         conn.close()
