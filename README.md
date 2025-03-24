@@ -2,7 +2,7 @@
 ![Expense Tracker UI](static/image-new.png)
 ## Description
 
-The Expense Tracker is a web application that allows users to track their expenses. Users can add, remove, clear, sort, and export expenses. The application is built using Flask, a lightweight web framework for Python, and MySQL for the database. Demo can viewed [here](https://expensetracker-production-1dbb.up.railway.app).
+The Expense Tracker is a web application that allows users to track their expenses. Users can add, remove, clear, sort, and export expenses. The application is built using Flask, a lightweight web framework for Python, and MySQL for the database. 
 
 ## Files
 
