@@ -29,6 +29,26 @@ th {
   background-color: #f4f4f4;
 }
 
+.auth-buttons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.auth-button {
+  text-decoration: none;
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 14px;
+  margin-left: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.auth-button:hover {
+  background-color: #45a049;
+}
+
 #sort-arrow {
   width: 10px;
   height: 10px;

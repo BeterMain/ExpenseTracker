@@ -28,7 +28,7 @@ class Database:
         values = (amount, category, description, date)
         
         # Execute query and commit changes
-        if len(self.get_expenses()) < 20:
+        if len(self.get_expenses()):
             cursor.execute(sql, values)
             conn.commit()
         conn.close()
@@ -138,3 +138,85 @@ class Database:
                     csv_writer.writerow(item.values())
 
         return csv_file_path
+
+    # Accounts
+    def add_new_user(self, public_id, name, password, email):
+        # Attempt to connect to the database
+        conn = mysql.connector.connect(
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            database=self.database
+        )
+        cursor = conn.cursor()
+
+        # execute query
+        sql = "INSERT INTO accounts (public_id, username, password, email) VALUES (%s, %s, %s, %s)"
+        values = (public_id, name, password, email)
+        cursor.execute(sql, values)
+        conn.commit()
+        conn.close()
+
+    def find_by_email(self, email):
+        # Attempt to connect to the database
+        conn = mysql.connector.connect(
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            database=self.database
+        )
+        cursor = conn.cursor()
+        
+        # Execute find query based on email
+        cursor.execute(f"SELECT * FROM accounts WHERE email='{email}'")
+        
+        # Getting data
+        row = cursor.fetchall()
+        conn.close()
+
+        # Check if there are any entries
+        if row:
+            print(row)
+            return True
+        
+        return False
+
+    def find_user(self, public_id):
+        # Attempt to connect to the database
+        conn = mysql.connector.connect(
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            database=self.database
+        )
+        cursor = conn.cursor()
+        
+        # Execute find query based on email
+        cursor.execute(f"SELECT * FROM accounts WHERE public_id='{public_id}'")
+        
+        # Getting data
+        row = cursor.fetchall()
+        conn.close()
+
+        # Check if there are any entries
+        return row
+
+    def find_user(self, name):
+        # Attempt to connect to the database
+        conn = mysql.connector.connect(
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            database=self.database
+        )
+        cursor = conn.cursor()
+        
+        # Execute find query based on email
+        cursor.execute(f"SELECT * FROM accounts WHERE username='{name}'")
+        
+        # Getting data
+        row = cursor.fetchall()
+        conn.close()
+
+        # Check if there are any entries
+        return row
