@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone, timedelta
 from functools import wraps
 import Database as db
+from models.models import User
 
 app = Flask(__name__)
 
@@ -18,13 +19,14 @@ def token_required(f):
         token = request.cookies.get('jwt_token')
 
         if not token:
-            return jsonify({'message': 'Token is missing'}), 404
+            return redirect(url_for('login'))
         
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = db.find_user(data['public_id'])
+            current_user = db.find_by_public_id(data['public_id'])
+            
         except:
-            return jsonify({'message': 'Token is invalid!'}), 401
+            return redirect(url_for('login'))
 
         return f(current_user, *args, **kwargs)
 
@@ -38,7 +40,7 @@ def login():
         # grab data
         name = request.form['username']
         password = request.form['password']
-        user = db.find_user(name)
+        user = db.find_by_username(name)
 
         if not user or not check_password_hash(user[0][3], password):
             msg = "Invalid email or password"
@@ -82,7 +84,11 @@ def signup():
     return render_template('signup.html', msg = msg)
 
 @app.route("/home", methods=["GET", "POST"])
-def home():
+@token_required
+def home(current_user):
+    account_id = current_user.get_account_id()
+    print(current_user.get_account_id())
+
     if request.method == "POST":
         # Assign form data into variables
         amount = request.form.get("amount")
@@ -92,26 +98,31 @@ def home():
 
         modify = request.form.get("modify")
         expense_ids = request.form.getlist("expense_id")
+        
+        
 
         # Check form for modification type
         match modify:
             case "clear": # Clear all expenses
-                db.clear_all_expenses()
+                db.clear_all_expenses(account_id)
             case "remove" if expense_ids: # Clear selected expenses from db by id
-                db.clear_expenses(expense_ids)
+                db.clear_expenses(expense_ids, account_id)
             case "add" if amount and category and description and date:  # add new expense to db
-                db.add_expense(amount, category, description, date)
+                db.add_expense(amount, category, description, date, account_id)
 
     sort_by = request.form.get("sort")    
     if sort_by:
-        expenses = db.get_expenses(sort_by)
+        expenses = db.get_expenses(sort_by, account_id)
     else:
-        expenses = db.get_expenses() # get all expenses from db
+        expenses = db.get_expenses('date', account_id) # get all expenses from db
+    
+    print(expenses)
     return render_template("home.html", expenses=expenses)
 
 @app.route("/download_csv")
-def download_csv():
-    csv_file = db.convert_to_csv()
+@token_required
+def download_csv(current_user):
+    csv_file = db.convert_to_csv(current_user.get_account_id())
     return send_file(csv_file, as_attachment=True)
 
 if __name__ == "__main__":

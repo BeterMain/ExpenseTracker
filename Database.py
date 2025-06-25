@@ -2,6 +2,7 @@ import mysql.connector
 import csv
 from dotenv import load_dotenv
 import os 
+from models.models import User
 
 class Database:
     def __init__(self):
@@ -13,7 +14,7 @@ class Database:
         self.sort_column = 'date'
     
     # Executes INSERT query on db to add an expense
-    def add_expense(self, amount, category, description, date):
+    def add_expense(self, amount, category, description, date, account_id):
         # Attempt to connect to the database
         conn = mysql.connector.connect(
             host=self.host,
@@ -24,17 +25,16 @@ class Database:
         cursor = conn.cursor()
 
         # Assigns the SQL query to insert a new expense into the database
-        sql = "INSERT INTO expenses (amount, category, description, date) VALUES (%s, %s, %s, %s)"
-        values = (amount, category, description, date)
+        sql = "INSERT INTO expenses (amount, category, description, date, account_id) VALUES (%s, %s, %s, %s, %s)"
+        values = (amount, category, description, date, account_id)
         
         # Execute query and commit changes
-        if len(self.get_expenses()):
-            cursor.execute(sql, values)
-            conn.commit()
+        cursor.execute(sql, values)
+        conn.commit()
         conn.close()
     
     # Executes DELETE query on db to clear all expenses
-    def clear_all_expenses(self):
+    def clear_all_expenses(self, account_id):
         # Attempt to connect to the database
         conn = mysql.connector.connect(
             host=self.host,
@@ -45,7 +45,7 @@ class Database:
         cursor = conn.cursor()    
 
         # Assigns the SQL query to delete all expenses from the database
-        sql = "DELETE FROM expenses"
+        sql = f"DELETE FROM expenses WHERE account_id = {account_id}"
         
         # Execute query and commit changes
         cursor.execute(sql)
@@ -53,7 +53,7 @@ class Database:
         conn.close()
     
     # Executes DELETE query on db to clear selected expenses
-    def clear_expenses(self, expense_id=[]):
+    def clear_expenses(self, expense_id, account_id):
         # Attempt to connect to the database
         conn = mysql.connector.connect(
             host=self.host,
@@ -67,7 +67,7 @@ class Database:
         sql = "DELETE FROM expenses WHERE expense_id IN (%s"
         for i in range(len(expense_id)-1): # appending each need value to the sql string
             sql += ", %s"
-        sql += ")" # adding closing tag
+        sql += f") AND account_id = {account_id}" # adding closing tag and extra case
 
         # Converting list of ids to a tuple for SQL query
         values = ()
@@ -80,7 +80,7 @@ class Database:
         conn.close()
 
     # Executes SELECT query on db to fetch all expenses
-    def get_expenses(self, column='date'):
+    def get_expenses(self, column, account_id):
         # Attempt to connect to the database
         conn = mysql.connector.connect(
             host=self.host,
@@ -95,7 +95,7 @@ class Database:
             column = 'date'
         self.sort_column = column
 
-        cursor.execute(f"SELECT * FROM expenses ORDER BY {self.sort_column} DESC")
+        cursor.execute(f"SELECT expense_id, amount, category, description, date FROM expenses INNER JOIN accounts ON expenses.account_id = accounts.account_id WHERE accounts.account_id = {account_id} ORDER BY {self.sort_column} DESC")
         # Gathers results in list
         expenses = cursor.fetchall()
         
@@ -103,7 +103,7 @@ class Database:
         # Return results
         return expenses
 
-    def convert_to_csv(self):
+    def convert_to_csv(self, account_id):
          # Attempt to connect to the database
         conn = mysql.connector.connect(
             host=self.host,
@@ -113,7 +113,7 @@ class Database:
         )
         cursor = conn.cursor()
 
-        cursor.execute(f"SELECT * FROM expenses ORDER BY {self.sort_column} DESC")
+        cursor.execute(f"SELECT amount, category, description, date FROM expenses INNER JOIN accounts ON expenses.account_id = accounts.account_id WHERE accounts.account_id = {account_id} ORDER BY {self.sort_column} DESC")
         rows = cursor.fetchall()
 
         columns = [col[0] for col in cursor.description]
@@ -181,7 +181,8 @@ class Database:
         
         return False
 
-    def find_user(self, public_id):
+    # Finds user by public id and returns a User object that contains their information
+    def find_by_public_id(self, public_id: str):
         # Attempt to connect to the database
         conn = mysql.connector.connect(
             host=self.host,
@@ -197,11 +198,13 @@ class Database:
         # Getting data
         row = cursor.fetchall()
         conn.close()
+        
+        data = row[0]
 
-        # Check if there are any entries
-        return row
+        # Turn row data into User object
+        return User(data[2], data[3], data[4], data[0], data[1])
 
-    def find_user(self, name):
+    def find_by_username(self, name):
         # Attempt to connect to the database
         conn = mysql.connector.connect(
             host=self.host,
