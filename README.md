@@ -1,87 +1,147 @@
 # Expense Tracker
+
 ![Expense Tracker UI](static/image-new.png)
+
 ## Description
 
-The Expense Tracker is a web application that allows users to track their expenses. Users can add, remove, clear, sort, and export expenses. The application is built using Flask, a lightweight web framework for Python, and MySQL for the database. 
+Expense Tracker is a secure web application for tracking your personal expenses. Users can register, log in, and manage their own expenses. Features include adding, removing, clearing, sorting, and exporting expenses to CSV. The backend is built with Flask and MySQL, and environment variables are used for secure configuration.
 
-## Files
+---
 
-### `app.py`
+## Features
 
-This is the main Flask application file. It contains the routes for the application and handles form submissions.
+- User registration and login (hashed passwords, JWT authentication)
+- Add, remove, and clear expenses
+- Sort expenses by amount, category, description, or date
+- Export expenses to CSV
+- Responsive and clean UI
 
-### `Database.py`
+---
 
-This file contains the `Database` class, which handles interactions with the MySQL database. It includes methods for adding, removing, and retrieving expenses.
+## Project Structure
 
-### `static/home.css`
+```
+ExpenseTracker/
+│
+├── app.py
+├── Database.py
+├── requirements.txt
+├── .env
+├── README.md
+│
+├── models/
+│   └── models.py
+│
+├── static/
+│   ├── home.css
+│   ├── auth.css
+│   ├── down.png
+│   └── image-new.png
+│
+├── templates/
+│   ├── home.html
+│   ├── login.html
+│   ├── signup.html
+│   └── index.html
+│
+└── expenses.csv
+```
 
-This file contains the CSS styles for the application.
-
-### `templates/home.html`
-
-This is the main HTML template for the application. It contains the form for adding expenses and displays the list of expenses.
-
-### `templates/login.html`
-
-This is the HTML template for the login page.
+---
 
 ## Setup
 
 ### Prerequisites
 
-- Python 3.11
-- MySQL
+- Python 3.11+
+- MySQL server
 
 ### Installation
 
-1. Clone the repository:
-
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/yourusername/ExpenseTracker.git
    cd ExpenseTracker
    ```
-2. Install the required Python packages:
-  ```bash
-  pip install flask mysql-connector-python pandas
-  ```
-3. Set up the MySQL database:
-```MySQL
-CREATE DATABASE expense_tracker;
-USE expense_tracker;
 
-CREATE TABLE expenses (
-    expense_id INT AUTO_INCREMENT PRIMARY KEY,
-    amount DECIMAL(10, 2) NOT NULL,
-    category VARCHAR(255) NOT NULL,
-    description TEXT,
-    date DATE NOT NULL
-);
-```
-4. Update the database connection details in your .env file:
-```env
-MYSQLHOST='localhost'
-MYSQLUSER='your_mysql_username'
-MYSQLPASSWORD='your_mysql_password'
-MYSQLDATABASE='expense_tracker'
-```
+2. **Install required Python packages:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Set up the MySQL database:**
+   ```sql
+   CREATE DATABASE expense_tracker;
+   USE expense_tracker;
+
+   CREATE TABLE accounts (
+       account_id INT AUTO_INCREMENT PRIMARY KEY,
+       public_id VARCHAR(100) NOT NULL,
+       username VARCHAR(100) NOT NULL,
+       password VARCHAR(255) NOT NULL,
+       email VARCHAR(255) NOT NULL
+   );
+
+   CREATE TABLE expenses (
+       expense_id INT AUTO_INCREMENT PRIMARY KEY,
+       amount DECIMAL(10, 2) NOT NULL,
+       category VARCHAR(255) NOT NULL,
+       description TEXT,
+       date DATE NOT NULL,
+       account_id INT,
+       FOREIGN KEY (account_id) REFERENCES accounts(account_id)
+   );
+   ```
+
+4. **Create a `.env` file in the project root:**
+   ```env
+   MYSQLHOST=localhost
+   MYSQLUSER=your_mysql_username
+   MYSQLPASSWORD=your_mysql_password
+   MYSQLDATABASE=expense_tracker
+   ```
+
+---
+
 ## Running the Application
-1. Start the Flask application:
-```bash
-python app.py
-```
-2. Open your web browser and go to the url posted in the terminal, or go to [here](https://expensetracker-production-1dbb.up.railway.app) to view a demo of the project in your browser. 
+
+1. **Start the Flask application:**
+   ```bash
+   python app.py
+   ```
+
+2. **Open your browser and go to:**  
+   `http://127.0.0.1:5000/`
+
+---
 
 ## Usage
-* Add Expense: Fill in the form with the amount, category, description, and date, then click "Add Expense".
-* Remove Selected: Select the expenses you want to remove by checking the checkboxes, then click "Remove Selected".
-* Clear All Data: Click "Clear All Data" to remove all expenses from the database.
-* Sort Current Data: Click the down arrow next each column name to sort the data based on the column
-* Export data to CSV: Click "Convert to CSV" to download your current data into a .csv file for editing in Excel!
+
+- **Sign Up / Login:** Register a new account or log in with your credentials.
+- **Add Expense:** Fill in the form with amount, category, description, and date, then click "Add Expense".
+- **Remove Selected:** Select expenses using the checkboxes and click "Remove Selected".
+- **Clear All Data:** Click "Clear All Data" to remove all your expenses.
+- **Sort Data:** Click the down arrow next to each column name to sort by that column.
+- **Export to CSV:** Click "Convert to CSV" to download your expenses as a CSV file.
+
+---
+
+## Security
+
+- Passwords are hashed using Werkzeug.
+- User authentication is handled with JWT tokens stored in cookies.
+- Database credentials are managed via environment variables.
+
+---
 
 ## License
+
 This project is licensed under the MIT License. See the LICENSE file for details.
 
+---
+
 ## Author
+
 Justin Toliver
 
+---
